@@ -1,11 +1,12 @@
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class VendingMachineImplementation {
     private long totalSales;
     private Item currentItem;
     private long currentBalance;
     private Inventory<Item> itemInventory = new Inventory<Item>();
+    private final Scanner sc = new Scanner(System.in);
 
     public VendingMachineImplementation() {
         initialize();
@@ -34,10 +35,7 @@ public class VendingMachineImplementation {
     }
 
     private boolean isFullPaid() {
-        if (currentBalance >= currentItem.getPrice()) {
-            return true;
-        }
-        return false;
+        return currentBalance >= currentItem.getPrice();
     }
 
     public void reset() {
@@ -47,12 +45,74 @@ public class VendingMachineImplementation {
         currentBalance = 0;
     }
 
-    public void printStore(){
+    public void printStore() {
         System.out.println("В автомате доступны:");
-        System.out.println(Item.BANANACHIPS);
-        System.out.println(Item.CANDY);
-        System.out.println(Item.WATER);
+        System.out.printf("[%s] - %s%n", Item.CHOCOLATE.getPrice(), Item.CHOCOLATE.getName());
+        System.out.printf("[%s] - %s%n", Item.CANDY.getPrice(), Item.CANDY.getName());
+        System.out.printf("[%s] - %s%n", Item.WATER.getPrice(), Item.WATER.getName());
+        System.out.printf("[%s] - %s%n", Item.PEPSI.getPrice(), Item.PEPSI.getName());
+        System.out.println();
+        System.out.println("Монет на сумму: 0");
     }
 
+    public void printMenu() {
+        System.out.println();
+        System.out.println("Что хотите сделать:");
+        System.out.println("a - закинуть монеты");
+        System.out.println("q - выйти");
+    }
+
+    public void choiceAction() {
+        String choice = sc.nextLine();
+        int choiceMoney = 0;
+        switch (choice) {
+            case "a":
+                try {
+                    chooseProduct(insertMoney());
+                } catch (Exception e) {
+                    System.out.println("Choose correct option");
+                }
+                break;
+            case "q":
+                break;
+            default:
+                System.out.println("Wrong command");
+                choiceAction();
+        }
+    }
+
+    public int insertMoney() {
+        int choiceMoney = 0;
+        try {
+            System.out.println("Выберите монету:");
+            System.out.println("1 - 20");
+            System.out.println("2 - 50");
+            System.out.println("3 - 100");
+            choiceMoney = sc.nextInt();
+            System.out.printf("Монет на сумму: %s", Coin.values()[choiceMoney - 1].getValue());
+            System.out.println();
+            return choiceMoney;
+        } catch (Exception e) {
+            System.out.println("Choose correct option");
+            insertMoney();
+        }
+        return 0;
+    }
+
+    public void chooseProduct(int choiceMoney) {
+//        var itemsStore = new HashMap<String, Integer>();
+//        for (Item i : Item.values()) {
+//            itemsStore.put(i.getName(), i.getPrice());
+//        }
+        List<Item> itemList = new ArrayList<>(List.of(Item.values()));
+        var filtered = itemList.stream()
+                        .filter(item -> choiceMoney>=item.getPrice())
+                                .collect(Collectors.toList());
+        filtered.forEach(System.out::println);
+//        itemsStore.stream()
+//                .filter(item -> choiceMoney >= item.getPrice())
+//                .collect(Collectors.toSet());
+//        itemsStore.forEach(System.out::println);
+    }
 
 }

@@ -1,7 +1,8 @@
 public enum Item {
-    BANANACHIPS("bananachips", 100),
+    CHOCOLATE("chocolate", 100),
     CANDY("candy", 30),
-    WATER("water", 25);
+    WATER("water", 25),
+    PEPSI("pepsi", 50);
     private String name;
     private int price;
 
